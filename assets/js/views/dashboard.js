@@ -1,30 +1,30 @@
 // "/app/w/:id" — creator dashboard.
 import { IS_DEPLOYED, COLORS } from "../config.js";
 import { $, esc, fmt, short, shorter, sameAddr, toast, url, daysTo, download, toCSV, avatar, timeAgo, reduced, clean, tween, ZERO } from "../util.js";
-import { railHTML, modal } from "../ui.js";
+import { railHTML, modal, panelHead } from "../ui.js";
 import { wallet, onWallet, getList, watchList, rank, txClose, friendlyError } from "../chain.js";
 
 export function view([idStr]) {
   return {
     title: `Dashboard #${idStr}`,
-    html: `<div class="appgrid">${railHTML("")}<div class="appmain" data-dash><div class="sk sk--h"></div><div class="stats">${"<div class='card stat sk-card'></div>".repeat(4)}</div></div></div>`,
+    html: `<div class="appgrid">${railHTML("")}<div class="appmain" data-dash><div class="sk sk--h"></div><div class="stats">${"<div class='stat sk-card'></div>".repeat(4)}</div></div></div>`,
     mount: (root) => mount(root, Number(idStr)),
   };
 }
 
 async function mount(root, id) {
   const box = $("[data-dash]", root);
-  if (!IS_DEPLOYED) { box.innerHTML = `<div class="empty card"><h1 class="h2">Waitlist not found</h1><p class="muted">The contract isn't deployed on this network yet.</p></div>`; return; }
+  if (!IS_DEPLOYED) { box.innerHTML = `<div class="empty panel"><h1 class="h2 px">Waitlist not found</h1><p class="muted">The contract isn't deployed on this network yet.</p></div>`; return; }
   let list;
   try { list = await getList(id); }
-  catch (e) { box.innerHTML = `<div class="empty card"><span class="big-emoji">🎟️</span><h1 class="h2">Waitlist not found</h1><p class="muted">${e.code === "NOT_FOUND" ? "No waitlist with this number." : "Couldn't reach BOT Chain."}</p><a class="btn btn--lime" href="${url("/app/new")}" data-link>Create one</a></div>`; return; }
+  catch (e) { box.innerHTML = `<div class="empty panel"><span class="big-emoji">🎟️</span><h1 class="h2 px">Waitlist not found</h1><p class="muted">${e.code === "NOT_FOUND" ? "No waitlist with this number." : "Couldn't reach BOT Chain."}</p><a class="btn btn--lime" href="${url("/app/new")}" data-link>Create one</a></div>`; return; }
 
   const accent = COLORS[list.color]?.hex || "#C6FF3D";
   box.innerHTML = `
   <div class="dash__head">
     <div>
       <span class="eyebrow">Dashboard · #${id}</span>
-      <h1 class="h2"><span>${esc(list.icon)}</span> ${esc(clean(list.name))}</h1>
+      <h1 class="h2 px">${esc(clean(list.name))}</h1>
       <p class="muted" data-dash-status></p>
     </div>
     <div class="row gap-sm wrap-row">
@@ -34,15 +34,15 @@ async function mount(root, id) {
     </div>
   </div>
   <div class="stats">
-    <div class="card stat"><span>Total in line</span><b class="mono" data-s="total">0</b></div>
-    <div class="card stat"><span>Joined today</span><b class="mono" data-s="today">0</b></div>
-    <div class="card stat"><span>Referral share</span><b class="mono" data-s="share">0%</b></div>
-    <div class="card stat"><span>Days to launch</span><b class="mono" data-s="days">${list.closed ? "—" : daysTo(list.launchAt)}</b></div>
+    <div class="stat"><span class="mono">Total in line</span><b class="px" data-s="total">0</b></div>
+    <div class="stat"><span class="mono">Joined today</span><b class="px" data-s="today">0</b></div>
+    <div class="stat"><span class="mono">Referral share</span><b class="px" data-s="share">0%</b></div>
+    <div class="stat"><span class="mono">Days to launch</span><b class="px" data-s="days">${list.closed ? "—" : daysTo(list.launchAt)}</b></div>
   </div>
-  <section class="card chartcard"><div class="row between"><h2 class="h4">Signups per day</h2><span class="muted small" data-chart-sum></span></div><div class="chartbox"><canvas data-chart aria-label="Signups per day"></canvas></div></section>
+  <section class="panel chartcard">${panelHead("signups per day", `<span data-chart-sum></span>`)}<div class="chartbox panel__pad"><canvas data-chart aria-label="Signups per day"></canvas></div></section>
   <div class="dash__tables">
-    <section class="card"><h2 class="h4">Top 20 inviters</h2><table class="table"><thead><tr><th>#</th><th>Wallet</th><th>Friends</th><th>Spot</th></tr></thead><tbody data-inviters></tbody></table></section>
-    <section class="card"><h2 class="h4">Latest joins</h2><table class="table"><thead><tr><th>Join</th><th>Wallet</th><th>Via</th><th>When</th></tr></thead><tbody data-latest></tbody></table></section>
+    <section class="panel">${panelHead("top 20 inviters", "BY FRIENDS")}<div class="panel__pad"><table class="table"><thead><tr><th>#</th><th>Wallet</th><th>Friends</th><th>Spot</th></tr></thead><tbody data-inviters></tbody></table></div></section>
+    <section class="panel">${panelHead("latest joins", "NEWEST FIRST")}<div class="panel__pad"><table class="table"><thead><tr><th>Join</th><th>Wallet</th><th>Via</th><th>When</th></tr></thead><tbody data-latest></tbody></table></div></section>
   </div>`;
 
   let chart, state = { list, ranked: null };

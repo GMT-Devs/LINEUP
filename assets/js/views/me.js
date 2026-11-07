@@ -13,9 +13,9 @@ export function view() {
 }
 
 function card(l, extra, href) {
-  return `<a class="linecard card" href="${url(href)}" data-link style="${coverStyle(l.color)}">
+  return `<a class="linecard" href="${url(href)}" data-link style="${coverStyle(l.color)}">
     <span class="linecard__icon">${esc(l.icon || "🚀")}</span>
-    <div class="linecard__body"><b>${esc(clean(l.name))}</b><span class="muted small">${fmt(l.count)} in line${l.closed ? " · Launched 🎉" : ""}</span>
+    <div class="linecard__body"><b>${esc(clean(l.name))}</b><span class="muted small">${fmt(l.count)} in line</span>
     <div class="linecard__cd" data-countdown="${l.launchAt}" data-closed="${l.closed ? 1 : 0}">${countdownHTML(l.launchAt, l.closed)}</div></div>
     ${extra}
   </a>`;
@@ -27,12 +27,12 @@ async function mount(root) {
   const render = async () => {
     const my = ++seq;
     if (!wallet.account) {
-      box.innerHTML = `<div class="empty card"><span class="big-emoji">🎟️</span><h1 class="h2">My lines</h1><p class="muted">Connect your wallet to see the waitlists you created and the lines you're in.</p><button class="btn btn--lime" data-conn>Connect wallet</button></div>`;
+      box.innerHTML = `<div class="empty panel"><span class="big-emoji">🎟️</span><h1 class="h2 px">My lines</h1><p class="muted">Connect your wallet to see the waitlists you created and the lines you're in.</p><button class="btn btn--lime" data-conn>Connect wallet</button></div>`;
       $("[data-conn]", box).onclick = async () => { try { await connect(); } catch (e) { e.code === "NO_WALLET" ? showInstall() : null; } };
       return;
     }
-    if (!IS_DEPLOYED) { box.innerHTML = `<div class="empty card"><h1 class="h2">My lines</h1><p class="muted">The contract isn't deployed on this network yet.</p></div>`; return; }
-    box.innerHTML = `<h1 class="h2">My lines</h1><p class="muted">Loading from BOT Chain…</p>`;
+    if (!IS_DEPLOYED) { box.innerHTML = `<div class="empty panel"><h1 class="h2 px">My lines</h1><p class="muted">The contract isn't deployed on this network yet.</p></div>`; return; }
+    box.innerHTML = `<h1 class="h2 px">My lines</h1><p class="muted">Loading from BOT Chain…</p>`;
     try {
       const { created, joined } = await listsOf(wallet.account);
       const ids = [...new Set([...created, ...joined])];
@@ -45,14 +45,14 @@ async function mount(root) {
       }));
       if (my !== seq) return;
       box.innerHTML = `
-        <div class="row between"><h1 class="h2">My lines</h1><a class="btn btn--lime btn--sm" href="${url("/app/new")}" data-link>＋ New waitlist</a></div>
-        <h2 class="h4">Created by you</h2>
+        <div class="row between"><h1 class="h2 px">My lines</h1><a class="btn btn--lime btn--sm" href="${url("/app/new")}" data-link>＋ New waitlist</a></div>
+        <span class="eyebrow">Created by you</span>
         <div class="linegrid">${created.slice().reverse().map((i) => card(lists.get(i), `<span class="linecard__go">Dashboard →</span>`, `/app/w/${i}`)).join("") || `<p class="muted">Nothing yet. <a href="${url("/app/new")}" data-link>Create your first waitlist →</a></p>`}</div>
-        <h2 class="h4">Lines you're in</h2>
+        <span class="eyebrow">Lines you're in</span>
         <div class="linegrid">${joinedCards.join("") || `<p class="muted">You haven't joined any lines yet.</p>`}</div>`;
       if (window.gsap && !reduced()) gsap.from(box.querySelectorAll(".linecard"), { y: 16, opacity: 0, stagger: 0.05, duration: 0.5 });
     } catch (e) {
-      if (my === seq) box.innerHTML = `<div class="empty card"><h1 class="h2">My lines</h1><p class="muted">${esc(friendlyError(e))}</p></div>`;
+      if (my === seq) box.innerHTML = `<div class="empty panel"><h1 class="h2 px">My lines</h1><p class="muted">${esc(friendlyError(e))}</p></div>`;
     }
   };
   render();

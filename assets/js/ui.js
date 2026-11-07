@@ -61,11 +61,13 @@ export function appNav() {
       ${logo("/")}
       <nav class="nav__links" aria-label="App">
         <a class="nav__link" href="${url("/app/me")}" data-link>My lines</a>
-        <a class="nav__link" href="${url("/app/new")}" data-link>New waitlist</a>
+        <a class="nav__link" href="${url("/#how")}" data-link>How it works</a>
+        <a class="nav__link" href="${url("/#faq")}" data-link>FAQ</a>
       </nav>
       <div class="nav__cta">
         ${NET.key === "testnet" ? `<span class="pill pill--warn">Testnet</span>` : ""}
-        ${walletBtn()}
+        ${walletBtn("nav__wallet")}
+        <a class="btn btn--lime btn--sm" href="${url("/app/new")}" data-link>New waitlist</a>
       </div>
     </div>
   </header>`;
@@ -73,13 +75,22 @@ export function appNav() {
 
 export function railHTML(active = "") {
   return `<aside class="rail">
-    <a class="rail__item ${active === "me" ? "is-active" : ""}" href="${url("/app/me")}" data-link><span>☰</span> My lines</a>
-    <a class="rail__item ${active === "new" ? "is-active" : ""}" href="${url("/app/new")}" data-link><span>＋</span> New waitlist</a>
+    <span class="rail__label mono">Workspace</span>
+    <a class="rail__item ${active === "me" ? "is-active" : ""}" href="${url("/app/me")}" data-link><span class="mono">01</span> My lines</a>
+    <a class="rail__item ${active === "new" ? "is-active" : ""}" href="${url("/app/new")}" data-link><span class="mono">02</span> New waitlist</a>
     <div class="rail__note">
       <span class="eyebrow">Network</span>
-      <p>${esc(NET.chainName)} · ${NET.chainId}</p>
+      <p class="mono">${esc(NET.chainName)}<br>chain ID ${NET.chainId}</p>
     </div>
   </aside>`;
+}
+
+/** Giga-style console panel: pixel title bar on top, hardware strip below. */
+export function panelHead(title, meta = "") {
+  return `<div class="panel__head"><span class="px panel__title">${title}</span>${meta ? `<span class="mono panel__meta">${meta}</span>` : ""}</div>`;
+}
+export function panelFoot(left = "LINEUP", right = "LIVE") {
+  return `<div class="panel__foot"><span class="screw"></span><span class="mono">${left}</span><span class="panel__mode mono"><i></i>${right}</span><span class="dots" aria-hidden="true"></span></div>`;
 }
 
 /** Keeps every [data-wallet-btn] in sync with the wallet state. */

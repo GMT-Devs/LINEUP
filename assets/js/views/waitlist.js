@@ -1,7 +1,7 @@
 // "/w/:id" — public waitlist page.
 import { IS_DEPLOYED, MIN_BALANCE_BOT, LINKS, NET } from "../config.js";
 import { $, $$, esc, fmt, short, shorter, isAddr, sameAddr, copy, toast, absUrl, url, clean, countdownHTML, reduced, avatar, timeAgo, tween } from "../util.js";
-import { coverStyle, ticketHTML, showInstall } from "../ui.js";
+import { coverStyle, ticketHTML, showInstall, panelHead, panelFoot } from "../ui.js";
 import { wallet, onWallet, connect, ensureChain, onRightChain, getList, watchList, rank, txJoin, friendlyError, getBalance, loadMembers } from "../chain.js";
 
 export function view([idStr]) {
@@ -13,7 +13,7 @@ export function view([idStr]) {
 }
 
 function notFound(root, extra = "") {
-  $("[data-wlpage]", root).innerHTML = `<div class="empty card"><span class="big-emoji">🎟️</span><h1 class="h2">Waitlist not found</h1><p class="muted">${extra || "This line doesn't exist (yet). Check the link, or make your own."}</p><a class="btn btn--lime" href="${url("/app/new")}" data-link>Create a waitlist</a></div>`;
+  $("[data-wlpage]", root).innerHTML = `<div class="empty panel"><span class="big-emoji">🎟️</span><h1 class="h2 px">Waitlist not found</h1><p class="muted">${extra || "This line doesn't exist (yet). Check the link, or make your own."}</p><a class="btn btn--lime" href="${url("/app/new")}" data-link>Create a waitlist</a></div>`;
 }
 
 async function mount(root, id) {
@@ -33,24 +33,26 @@ async function mount(root, id) {
   <article class="wl wl--page" style="${coverStyle(list.color)}">
     <div class="wl__cover"><span class="wl__icon">${esc(list.icon || "🚀")}</span>${list.closed ? `<span class="wl__badge">Launched 🎉</span>` : ""}</div>
     <div class="wl__body">
-      <h1 class="wl__name">${esc(clean(list.name))}</h1>
+      <span class="eyebrow">Waitlist #${id}</span>
+      <h1 class="wl__name px">${esc(clean(list.name))}</h1>
       ${list.pitch ? `<p class="wl__pitch">${esc(clean(list.pitch))}</p>` : ""}
       <div data-countdown="${list.launchAt}" data-closed="${list.closed ? 1 : 0}">${countdownHTML(list.launchAt, list.closed)}</div>
       <p class="wl__count"><b class="mono" data-counter>${fmt(list.count)}</b> <span data-people>${list.count === 1 ? "person" : "people"}</span> in line${list.maxSpots ? ` <span class="muted">/ ${fmt(list.maxSpots)} spots</span>` : ""}</p>
       ${list.reward ? `<p class="wl__reward">🎁 ${esc(clean(list.reward))}</p>` : ""}
       <div class="wl__action" data-action></div>
     </div>
+    ${panelFoot(`LINEUP · #${id}`, list.closed ? "FINAL" : "LIVE")}
   </article>
   <p class="honest">Spots are wallet-based. Lineup is for fun and early access, not money. · Up ${list.boost} per friend, max ${list.cap} counted${list.minBalance ? ` · hold ≥ ${MIN_BALANCE_BOT} BOT to join` : ""}</p>
   <div class="ticker" data-ticker aria-label="Recent joins"><div class="ticker__track" data-track></div></div>
   <div class="wl__below">
-    <section class="card">
-      <h2 class="h4">Top inviters</h2>
-      <ol class="lb" data-lb><li class="muted small">No invites yet — be the first to share.</li></ol>
+    <section class="panel">
+      ${panelHead("top inviters", "TOP 10")}
+      <ol class="lb panel__pad" data-lb><li class="muted small">No invites yet — be the first to share.</li></ol>
     </section>
-    <section class="card">
-      <h2 class="h4">Recent joins</h2>
-      <ul class="recent" data-recent><li class="muted small">Nobody yet. Be #1.</li></ul>
+    <section class="panel">
+      ${panelHead("recent joins", "LIVE FEED")}
+      <ul class="recent panel__pad" data-recent><li class="muted small">Nobody yet. Be #1.</li></ul>
     </section>
   </div>
   <p class="wl__meta muted small">Waitlist #${id} · created by <a class="mono" href="${NET.scan}/address/${list.creator}" target="_blank" rel="noopener">${short(list.creator)}</a> · <a href="${LINKS.report}?title=${encodeURIComponent(`Report waitlist #${id}`)}" target="_blank" rel="noopener">Report</a></p>

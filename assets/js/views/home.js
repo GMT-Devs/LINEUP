@@ -16,8 +16,6 @@ export function view() {
   return {
     title: "",
     html: `
-<div class="grid-lines" aria-hidden="true"></div>
-
 <section class="hero">
   <div class="hero__glow" aria-hidden="true"></div>
   <div class="wrap hero__in">
