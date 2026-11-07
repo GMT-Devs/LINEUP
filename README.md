@@ -87,7 +87,6 @@ Run `npm run stamp` before pushing a site change. It adds a new version number t
 
 ## Before launch, check
 
-- `assets/img/botchain-logo.svg` is a **placeholder** mark. Replace it with the official BOT Chain logo.
 - Check `LINKS` in `config.js`: `botchainDocs` (currently `https://docs.botchain.ai`), the X handle, and the GitHub repo used for Report links.
 - Confirm that `rpc.botchain.ai` allows browser CORS requests from your domain.
 

@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 32" role="img" aria-label="BOT Chain">
-  <!-- Placeholder BOT Chain mark. Replace this file with the official BOT Chain logo from botchain.ai. -->
-  <g fill="none" stroke="#F4F2F8" stroke-width="2.4" stroke-linejoin="round">
-    <path d="M16 3 27 9.5v13L16 29 5 22.5v-13z"/>
-    <path d="M11 12.5h6.5a2.5 2.5 0 0 1 0 5H11zm0 5h7.5a2.5 2.5 0 0 1 0 5H11z" stroke-width="2"/>
-  </g>
-  <text x="36" y="21.5" fill="#F4F2F8" font-family="Space Grotesk, Inter, system-ui, sans-serif" font-size="15" font-weight="700" letter-spacing=".5">BOT Chain</text>
-</svg>

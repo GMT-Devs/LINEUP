@@ -133,8 +133,8 @@ export function modal(html) {
   return { el: m, close };
 }
 
-// ── BOT Chain mark (replace assets/img/botchain-logo.svg with the official file if you have it) ──
-const BOT_LOGO = `<img class="botlogo" src="assets/img/botchain-logo.svg" alt="BOT Chain" width="132" height="32">`;
+// ── BOT Chain logo (official mark) ──
+const BOT_LOGO = `<img class="botlogo" src="assets/img/botchain-mark.png" alt="" width="168" height="264"><span class="botlogo__txt"><small class="mono">Built on</small>BOT Chain</span>`;
 
 export function footer() {
   const addr = MAINNET_CONTRACT_ADDRESS;
