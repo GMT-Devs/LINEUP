@@ -20,7 +20,8 @@ export const ZERO = "0x0000000000000000000000000000000000000000";
 export const byteLen = (s) => new TextEncoder().encode(s).length;
 
 /** Base path (supports project pages like user.github.io/lineup/ as well as a custom domain). */
-export const BASE = (document.querySelector("base")?.getAttribute("href") || "/").replace(/\/$/, "");
+export const EMBED = !!window.LINEUP_EMBED; // hosted preview: in-memory routing, URL never changes
+export const BASE = EMBED ? "" : (document.querySelector("base")?.getAttribute("href") || "/").replace(/\/$/, "");
 export const url = (path) => `${BASE}${path}`;
 export const absUrl = (path) => `${location.origin}${BASE}${path}`;
 

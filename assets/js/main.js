@@ -1,5 +1,5 @@
 // Tiny router for the single-page site.
-import { BASE, $, startCountdowns, reduced } from "./util.js";
+import { BASE, EMBED, $, startCountdowns, reduced } from "./util.js";
 import { initWallet } from "./chain.js";
 import { siteNav, appNav, footer, bindWalletButtons, bindFooter } from "./ui.js";
 import * as home from "./views/home.js";
@@ -28,7 +28,9 @@ const routes = [
 let cleanup = [];
 const app = $("#app");
 
+let memPath = "/", memHash = "";
 function currentPath() {
+  if (EMBED) return memPath;
   let p = location.pathname;
   if (BASE && p.startsWith(BASE)) p = p.slice(BASE.length);
   return p || "/";
@@ -56,14 +58,24 @@ async function render() {
   const c = await v.mount?.(app);
   if (typeof c === "function") cleanup.push(c);
 
-  if (location.hash) {
-    const t = document.getElementById(location.hash.slice(1));
+  const hash = EMBED ? memHash : location.hash;
+  if (hash) {
+    const t = document.getElementById(hash.slice(1));
     if (t) setTimeout(() => t.scrollIntoView({ behavior: reduced() ? "auto" : "smooth" }), 60);
   } else window.scrollTo(0, 0);
   window.ScrollTrigger?.refresh();
 }
 
 export function navigate(to, { replace = false } = {}) {
+  if (EMBED) {
+    const [path, frag = ""] = to.split("#");
+    const p = (path || memPath).split("?")[0] || "/";
+    memHash = frag ? "#" + frag : "";
+    if (p === memPath && frag) { document.getElementById(frag)?.scrollIntoView({ behavior: reduced() ? "auto" : "smooth" }); return; }
+    memPath = p;
+    render();
+    return;
+  }
   const u = new URL(to, location.href);
   const samePage = u.pathname === location.pathname && u.search === location.search;
   if (samePage && u.hash) {
