@@ -104,6 +104,9 @@ function validate(d) {
 function mount(root) {
   const form = $("[data-form]", root), prev = $("[data-preview]", root), err = $("[data-err]", root);
   const state = { color: 0, icon: ICONS[0] };
+  const prefill = new URLSearchParams(location.search).get("name") || window.__lineupPrefill || "";
+  window.__lineupPrefill = "";
+  if (prefill && !form.name.value) form.name.value = prefill.slice(0, LIMITS.name);
   const update = () => {
     const d = readForm(form, state);
     ["name", "pitch", "reward"].forEach((k) => ($(`[data-count="${k}"]`, root).textContent = `${byteLen(d[k])}/${LIMITS[k]}`));
