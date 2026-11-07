@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+// ⚠️ Remix: Solidity Compiler → Advanced Configurations → EVM version = "paris".
+// Newer EVM targets (cancun/prague, Remix's default) emit MCOPY, which makes
+// createList revert on BOT Chain with "execution reverted (no data present)".
+
 /// @title Lineup — on-chain launch waitlists with referral boosts
 /// @notice Anyone can create a waitlist. People join with their wallet and can
 ///         name a referrer who is already in the same list. Each counted
