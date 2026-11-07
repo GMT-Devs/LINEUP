@@ -88,6 +88,13 @@ export function friendlyError(e) {
   };
   if (name && map[name]) return map[name];
   if (/insufficient funds/i.test(e.message || "")) return "Not enough BOT for gas";
+  // A revert with no data never comes from Lineup's own checks (those are named errors).
+  // On BOT Chain it usually means the deployed bytecode uses an opcode the chain doesn't
+  // support, e.g. the contract was compiled for EVM "cancun"/"prague" instead of "paris".
+  if (e.code === "CALL_EXCEPTION" && !name && (!e.data || e.data === "0x")) {
+    console.error("Lineup: contract reverted without a reason. Check that it was compiled with EVM version 'paris'.", e);
+    return "BOT Chain couldn't run this transaction (the contract gave no reason). Nothing was sent and no gas was spent. Please try again later.";
+  }
   return e.shortMessage || e.message || "Transaction failed";
 }
 
