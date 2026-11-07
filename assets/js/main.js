@@ -48,7 +48,7 @@ async function render() {
   const v = view(match ? match.slice(1) : []);
   document.title = v.title ? `${v.title} · Lineup` : "Lineup — Get in line.";
   document.body.dataset.kind = kind;
-  app.innerHTML = `${kind === "site" ? siteNav() : appNav()}<main id="main" tabindex="-1">${v.html}</main>${footer()}`;
+  app.innerHTML = `${kind === "site" ? siteNav() : appNav()}<main id="main" tabindex="-1"><div class="grid-lines" aria-hidden="true"></div>${v.html}</main>${footer()}`;
 
   cleanup.push(bindWalletButtons(app));
   bindFooter(app);

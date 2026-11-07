@@ -13,8 +13,8 @@ export function announce() {
   return `<a class="announce" href="${url("/#fair")}" data-link><span class="announce__tag">New</span> Referral boosts you can tune <span aria-hidden="true">→</span></a>`;
 }
 
-export function walletBtn() {
-  return `<button class="btn btn--ghost btn--sm" data-wallet-btn type="button">Connect wallet</button>`;
+export function walletBtn(cls = "btn btn--ghost btn--sm") {
+  return `<button class="${cls}" data-wallet-btn type="button">Connect wallet</button>`;
 }
 
 export function siteNav() {
@@ -24,7 +24,7 @@ export function siteNav() {
       ${logo("/")}
       <nav class="nav__links" aria-label="Main">
         <div class="mega">
-          <button class="nav__link mega__btn" type="button" aria-expanded="false">Product <span class="chev" aria-hidden="true">▾</span></button>
+          <button class="nav__link mega__btn" type="button" aria-expanded="false">Product <span class="chev" aria-hidden="true"></span></button>
           <div class="mega__panel" role="menu">
             <a class="mega__item" href="${url("/app/new")}" data-link role="menuitem"><span class="mega__ic mega__ic--lime">＋</span><span><b>Create a waitlist</b><i>One transaction, live in a minute</i></span></a>
             <a class="mega__item" href="${url("/app/me")}" data-link role="menuitem"><span class="mega__ic mega__ic--lilac">☰</span><span><b>My lines</b><i>Lists you made and lines you're in</i></span></a>
@@ -40,7 +40,7 @@ export function siteNav() {
         <a class="nav__link" href="${url("/#faq")}" data-link>FAQ</a>
       </nav>
       <div class="nav__cta">
-        ${walletBtn()}
+        ${walletBtn("nav__wallet")}
         <a class="btn btn--lime btn--sm" href="${url("/app/new")}" data-link>Create a waitlist</a>
         <button class="nav__burger" type="button" aria-label="Menu" data-burger><span></span><span></span></button>
       </div>
@@ -61,11 +61,13 @@ export function appNav() {
       ${logo("/")}
       <nav class="nav__links" aria-label="App">
         <a class="nav__link" href="${url("/app/me")}" data-link>My lines</a>
-        <a class="nav__link" href="${url("/app/new")}" data-link>New waitlist</a>
+        <a class="nav__link" href="${url("/#how")}" data-link>How it works</a>
+        <a class="nav__link" href="${url("/#faq")}" data-link>FAQ</a>
       </nav>
       <div class="nav__cta">
         ${NET.key === "testnet" ? `<span class="pill pill--warn">Testnet</span>` : ""}
-        ${walletBtn()}
+        ${walletBtn("nav__wallet")}
+        <a class="btn btn--lime btn--sm" href="${url("/app/new")}" data-link>New waitlist</a>
       </div>
     </div>
   </header>`;
@@ -73,13 +75,22 @@ export function appNav() {
 
 export function railHTML(active = "") {
   return `<aside class="rail">
-    <a class="rail__item ${active === "me" ? "is-active" : ""}" href="${url("/app/me")}" data-link><span>☰</span> My lines</a>
-    <a class="rail__item ${active === "new" ? "is-active" : ""}" href="${url("/app/new")}" data-link><span>＋</span> New waitlist</a>
+    <span class="rail__label mono">Workspace</span>
+    <a class="rail__item ${active === "me" ? "is-active" : ""}" href="${url("/app/me")}" data-link><span class="mono">01</span> My lines</a>
+    <a class="rail__item ${active === "new" ? "is-active" : ""}" href="${url("/app/new")}" data-link><span class="mono">02</span> New waitlist</a>
     <div class="rail__note">
       <span class="eyebrow">Network</span>
-      <p>${esc(NET.chainName)} · ${NET.chainId}</p>
+      <p class="mono">${esc(NET.chainName)}<br>chain ID ${NET.chainId}</p>
     </div>
   </aside>`;
+}
+
+/** Giga-style console panel: pixel title bar on top, hardware strip below. */
+export function panelHead(title, meta = "") {
+  return `<div class="panel__head"><span class="px panel__title">${title}</span>${meta ? `<span class="mono panel__meta">${meta}</span>` : ""}</div>`;
+}
+export function panelFoot(left = "LINEUP", right = "LIVE") {
+  return `<div class="panel__foot"><span class="screw"></span><span class="mono">${left}</span><span class="panel__mode mono"><i></i>${right}</span><span class="dots" aria-hidden="true"></span></div>`;
 }
 
 /** Keeps every [data-wallet-btn] in sync with the wallet state. */
@@ -152,15 +163,18 @@ export function footer() {
       </div>
 
       <div class="fcols">
-        <div class="fcols__brand">${logo("/")}<p class="muted">Launch waitlists that grow themselves. Wallet-only, no emails.</p></div>
+        <div class="fcols__brand">${logo("/")}
+          <span class="fcols__ok mono"><i></i>On-chain</span>
+          <div class="fbadges" aria-label="Contract facts"><span class="mono">677<small>CHAIN</small></span><span class="mono">EVM<small>PARIS</small></span><span class="mono">0.8<small>SOLC</small></span><span class="mono">MIT<small>LICENSE</small></span></div>
+          <div class="fsocial"><a href="${LINKS.x}" target="_blank" rel="noopener" aria-label="X">𝕏</a><span></span><a href="${LINKS.github}" target="_blank" rel="noopener" aria-label="GitHub">GH</a></div>
+        </div>
         <div><h4>Product</h4><a href="${url("/app/new")}" data-link>Create a waitlist</a><a href="${url("/#preview")}" data-link>Examples</a><a href="${url("/app/me")}" data-link>My lines</a></div>
-        <div><h4>Resources</h4><a href="${url("/#ranking")}" data-link>How ranking works</a><a href="${url("/#faq")}" data-link>FAQ</a><a href="${LINKS.botchainDocs}" target="_blank" rel="noopener">BOT Chain docs ↗</a></div>
-        <div><h4>Company</h4><a href="${LINKS.github}" target="_blank" rel="noopener">GitHub ↗</a><a href="${LINKS.x}" target="_blank" rel="noopener">X ↗</a></div>
-        <div><h4>Legal</h4><a href="${url("/privacy")}" data-link>Privacy</a><a href="${url("/terms")}" data-link>Terms</a></div>
+        <div><h4>Resources</h4><a href="${url("/#ranking")}" data-link>How ranking works</a><a href="${url("/#faq")}" data-link>FAQ</a><a href="${LINKS.botchainDocs}" target="_blank" rel="noopener">BOT Chain docs</a></div>
+        <div><h4>Company</h4><a href="${LINKS.github}" target="_blank" rel="noopener">GitHub</a><a href="${LINKS.x}" target="_blank" rel="noopener">X</a></div>
       </div>
       <div class="fbottom">
-        <span>© 2026 Lineup · wallet-based spots — for fun and early access</span>
-        <span class="mono muted">${NET.key === "testnet" ? "testnet mode · " : ""}${IS_DEPLOYED ? "" : "contract not deployed yet"}</span>
+        <nav class="flegal"><a href="${url("/privacy")}" data-link>Privacy</a><a href="${url("/terms")}" data-link>Terms</a><a href="${LINKS.report}" target="_blank" rel="noopener">Report a waitlist</a></nav>
+        <span>© 2026 Lineup · wallet-based spots — for fun and early access${NET.key === "testnet" ? " · testnet mode" : ""}${IS_DEPLOYED ? "" : " · contract not deployed yet"}</span>
       </div>
     </div>
   </footer>`;

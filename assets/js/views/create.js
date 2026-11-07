@@ -1,7 +1,7 @@
 // "/app/new" — create a waitlist, then show the share kit.
 import { COLORS, ICONS, LIMITS, IS_DEPLOYED, NET } from "../config.js";
 import { $, $$, esc, byteLen, flagged, copy, toast, absUrl, url, reduced } from "../util.js";
-import { previewCard, railHTML, showInstall } from "../ui.js";
+import { previewCard, railHTML, showInstall, panelHead, panelFoot } from "../ui.js";
 import { txCreate, friendlyError } from "../chain.js";
 
 const pad = (n) => String(n).padStart(2, "0");
@@ -18,9 +18,11 @@ export function view() {
   ${railHTML("new")}
   <div class="appmain">
     <div class="create" data-create>
-      <form class="form card" data-form novalidate>
+      <form class="form panel" data-form novalidate>
+        ${panelHead("new line", "ONE TRANSACTION")}
+        <div class="form__body">
         <span class="eyebrow">New waitlist</span>
-        <h1 class="h2">Make your line</h1>
+        <h1 class="h2 px">Make your line.</h1>
         ${IS_DEPLOYED ? "" : `<p class="notice">The contract address isn't set yet — you can fill the form and preview, but creating needs a deployed contract (see README).</p>`}
 
         <label class="field"><span>Product name <i data-count="name">0/${LIMITS.name}</i></span>
@@ -58,6 +60,8 @@ export function view() {
         <p class="form__err" data-err role="alert"></p>
         <button class="btn btn--lime btn--lg btn--block" type="submit" data-submit>Create waitlist</button>
         <p class="muted small">One transaction on ${esc(NET.chainName)}. Text can't be edited later. By creating, you agree to keep it friendly.</p>
+        </div>
+        ${panelFoot("LINEUP", `${esc(NET.chainName).toUpperCase()} · ${NET.chainId}`)}
       </form>
       <div class="create__preview">
         <span class="eyebrow">Live preview</span>
@@ -104,6 +108,9 @@ function validate(d) {
 function mount(root) {
   const form = $("[data-form]", root), prev = $("[data-preview]", root), err = $("[data-err]", root);
   const state = { color: 0, icon: ICONS[0] };
+  const prefill = new URLSearchParams(location.search).get("name") || window.__lineupPrefill || "";
+  window.__lineupPrefill = "";
+  if (prefill && !form.name.value) form.name.value = prefill.slice(0, LIMITS.name);
   const update = () => {
     const d = readForm(form, state);
     ["name", "pitch", "reward"].forEach((k) => ($(`[data-count="${k}"]`, root).textContent = `${byteLen(d[k])}/${LIMITS[k]}`));
@@ -145,9 +152,11 @@ function shareKit(root, id, d, hash) {
   const link = absUrl(`/w/${id}`);
   const post = `${d.icon} ${d.name} is launching soon — get in line on @BOTChain_ai.\n\nInvite friends to move up the waitlist 👇\n${link}`;
   const box = $("[data-create]", root);
-  box.innerHTML = `<div class="kit card">
+  box.innerHTML = `<div class="kit panel">
+    ${panelHead("live", `WAITLIST #${id}`)}
+    <div class="kit__body">
     <span class="eyebrow">Your line is live 🎉</span>
-    <h1 class="h2">${esc(d.icon)} ${esc(d.name)}</h1>
+    <h1 class="h2 px">${esc(d.name)}</h1>
     <div class="kit__grid">
       <div>
         <div class="field"><span>Link</span>
@@ -164,6 +173,8 @@ function shareKit(root, id, d, hash) {
       </div>
       <div class="kit__qr"><div data-qr></div><button class="btn btn--ghost btn--sm" data-dl-qr>Download QR</button></div>
     </div>
+    </div>
+    ${panelFoot("SHARE KIT", "LIVE")}
   </div>`;
   const qrEl = $("[data-qr]", box);
   if (window.QRCode) new QRCode(qrEl, { text: link, width: 200, height: 200, colorDark: "#0C0B10", colorLight: "#F4F2F8", correctLevel: QRCode.CorrectLevel.M });
