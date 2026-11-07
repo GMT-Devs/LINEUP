@@ -81,6 +81,10 @@ The dev server runs at http://localhost:5173. Add `?net=testnet` to use chain 96
 3. **GitHub Pages:** Settings → Pages → deploy from branch `main`, folder `/` (root). `.nojekyll` is already included. For a custom domain, add a `CNAME` file with the domain. Both `user.github.io/lineup/` and a custom domain work, because the base path is detected at runtime.
 4. Create a real waitlist for one of your upcoming projects and set `STORY.listId` (plus your own `quote`) in `config.js`. The home-page story card then shows live numbers. The big-stat section stays hidden until there are at least `BIG_STAT_MIN` (100) spots.
 
+## Releasing updates
+
+Run `npm run stamp` before pushing a site change. It adds a new version number to the CSS and every JS module in `index.html`, so visitors get the new files immediately instead of a cached copy (GitHub Pages lets browsers cache for 10 minutes).
+
 ## Before launch, check
 
 - `assets/img/botchain-logo.svg` is a **placeholder** mark. Replace it with the official BOT Chain logo.

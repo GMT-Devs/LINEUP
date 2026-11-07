@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "compile": "node scripts/compile.mjs",
+    "stamp": "node scripts/stamp.mjs",
     "deploy:testnet": "node scripts/deploy.mjs testnet",
     "deploy:mainnet": "node scripts/deploy.mjs mainnet"
   },
